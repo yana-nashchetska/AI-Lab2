@@ -82,7 +82,9 @@ const excitedArraySecond = findSignalsUU(signalASecondLetter, theta);
 
 function createLetterTables(array1, array2, comparisonArray) {
   const averageValue = averageOfArrays(array1, array2);
-  const maskArray = comparisonArray.map((element) => (element >= averageValue ? 1 : 0));
+  const maskArray = comparisonArray.map((element) =>
+    element >= averageValue ? 1 : 0
+  );
 
   // Ініціалізуємо масиви для першої та другої "літери" з нулями
   const firstLetterTable = Array(comparisonArray.length).fill(0);
@@ -103,7 +105,11 @@ function createLetterTables(array1, array2, comparisonArray) {
 }
 
 // Використовуємо функцію
-const { firstLetterTable, secondLetterTable } = createLetterTables(excitedArrayFirst, excitedArraySecond, secondTable);
+const { firstLetterTable, secondLetterTable } = createLetterTables(
+  excitedArrayFirst,
+  excitedArraySecond,
+  secondTable
+);
 
 console.log("firstLetterTable: ", firstLetterTable);
 console.log("secondLetterTable: ", secondLetterTable);
@@ -131,15 +137,18 @@ console.log(sumFirstU, sumSecondU);
 // знаїодимо тета р використовуючи просто формулу для середнього числа
 const thetaR = averageOfArrays([sumFirstU], [sumSecondU]);
 
-console.log('theta R: ', thetaR);
+console.log("theta R: ", thetaR);
 
 // перевіряємо результат та скористаємось функцією, що порівнює числа з тетою
 const excepted1 = findSignalsUU(sumFirstU, thetaR);
 const excepted2 = findSignalsUU(sumSecondU, thetaR);
 
-console.log((excepted1 < excepted2 ? "Вихідні вимоги задовільняються" :
-  "не вдалось задовольнити вимоги"));
-  
+console.log(
+  excepted1 < excepted2
+    ? "Вихідні вимоги задовільняються"
+    : "не вдалось задовольнити вимоги"
+);
+
 // 2.
 
 const n = 0.1;
@@ -147,7 +156,13 @@ const n = 0.1;
 // Задаємо початкові коефіцієнти та вхідні сигнали
 let weights = [...secondTable];
 
-function generateTable(secondTable, firstLetterTable, secondLetterTable, n, theta) {
+function generateTable(
+  secondTable,
+  firstLetterTable,
+  secondLetterTable,
+  n,
+  theta
+) {
   const table = []; // ініціалізація таблиці
   const rowCount = secondTable.length; // кількість рядків у таблиці
   let sumFirstLetter = 0; // для накопичення суми першої "букви"
@@ -165,7 +180,8 @@ function generateTable(secondTable, firstLetterTable, secondLetterTable, n, thet
     const column = Array(rowCount).fill(0);
 
     // Заповнюємо колонку значеннями з firstLetterTable або secondLetterTable
-    const sourceArray = columnIndex % 2 === 1 ? firstLetterTable : secondLetterTable;
+    const sourceArray =
+      columnIndex % 2 === 1 ? firstLetterTable : secondLetterTable;
     for (let i = 0; i < rowCount; i++) {
       const element = sourceArray[i];
       if (element !== 0) {
@@ -190,23 +206,45 @@ function generateTable(secondTable, firstLetterTable, secondLetterTable, n, thet
   }
 
   // Додаємо передостанній рядок для суми ненульових значень першої "букви"
-  const sumFirstLetterRow = Array(table[0].length).fill('-');
-  for (let col = 1; col < table[0].length; col += 2) {
-    sumFirstLetterRow[col] = table[col].reduce((acc, el) => (el !== 0 ? acc + el : acc), 0);
+  const sumFirstLetterRow = Array(table[0].length).fill("-");
+  for (let col = 1; col < table.length; col += 2) {
+    if (table[col]) {
+      // Перевірка на існування table[col]
+      sumFirstLetterRow[col] = table[col].reduce(
+        (acc, el) => (el !== 0 ? acc + el : acc),
+        0
+      );
+    } else {
+      sumFirstLetterRow[col] = 0; // Значення за замовчуванням
+    }
   }
   table.push(sumFirstLetterRow);
 
   // Додаємо останній рядок для суми ненульових значень другої "букви"
-  const sumSecondLetterRow = Array(table[0].length).fill('-');
-  for (let col = 2; col < table[0].length; col += 2) {
-    sumSecondLetterRow[col] = table[col].reduce((acc, el) => (el !== 0 ? acc + el : acc), 0);
+  const sumSecondLetterRow = Array(table[0].length).fill("-");
+  for (let col = 2; col < table.length; col += 2) {
+    if (table[col]) {
+      // Перевірка на існування table[col]
+      sumSecondLetterRow[col] = table[col].reduce(
+        (acc, el) => (el !== 0 ? acc + el : acc),
+        0
+      );
+    } else {
+      sumSecondLetterRow[col] = 0; // Значення за замовчуванням
+    }
   }
+
   table.push(sumSecondLetterRow);
 
   return table;
 }
 
 // Приклад використання функції
-const resultTable = generateTable(secondTable, firstLetterTable, secondLetterTable, n, thetaR);
+const resultTable = generateTable(
+  secondTable,
+  firstLetterTable,
+  secondLetterTable,
+  n,
+  thetaR
+);
 console.table(resultTable);
-
